@@ -404,7 +404,10 @@ def canva_login(request):
 def canva_callback(request):
     code = request.GET.get('code')
     if not code:
-        return render(request, 'error.html', {'message': 'Canva authorization failed'})
+        return render(request, 'canva_callback.html', {
+            'success': False,
+            'message': 'Authorization code not provided by Canva.'
+        })
 
     # Exchange code for access token
     data = {
@@ -414,14 +417,27 @@ def canva_callback(request):
         "redirect_uri": settings.CANVA_REDIRECT_URI,
         "code": code
     }
-    response = requests.post("https://api.canva.com/v1/oauth/token", data=data)
-    token_data = response.json()
 
-    # Save access token to user profile
-    if request.user.is_authenticated:
-        profile = getattr(request.user, 'profile', None)
-        if profile:
-            profile.canva_access_token = token_data.get("access_token")
-            profile.save()
+    try:
+        response = requests.post("https://api.canva.com/v1/oauth/token", data=data)
+        token_data = response.json()
+    except Exception as e:
+        return render(request, 'canva_callback.html', {
+            'success': False,
+            'message': f"Error contacting Canva API: {e}"
+        })
 
-    return redirect('/dashboard/?canva_connected=1')
+    access_token = token_data.get("access_token")
+    if not access_token:
+        return render(request, 'canva_callback.html', {
+            'success': False,
+            'message': token_data.get("error_description", "Unknown error occurred.")
+        })
+
+    # Save token to user profile
+    profile = getattr(request.user, 'profile', None)
+    if profile:
+        profile.canva_access_token = access_token
+        profile.save()
+
+    return render(request, 'canva_callback.html', {'success': True})

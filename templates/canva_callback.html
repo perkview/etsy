@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canva Integration</title>
+</head>
+<body>
+    {% if success %}
+        <h1>✅ Canva Authorization Successful!</h1>
+        <p>Your account has been connected.</p>
+    {% else %}
+        <h1>❌ Canva Authorization Failed</h1>
+        <p>{{ message }}</p>
+    {% endif %}
+    <a href="/">Go to Dashboard</a>
+</body>
+</html>
