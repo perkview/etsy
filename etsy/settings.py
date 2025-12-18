@@ -150,9 +150,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Added Manually:
+# URL to access static files
+STATIC_URL = '/static/'
+
+# Location where collectstatic will copy all static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Additional locations where Django will look for static files in development
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+    os.path.join(BASE_DIR, 'static'),  # your project static folder
 ]
+
 
 
 # Security & SSL settings
@@ -179,4 +187,5 @@ ETSY_REDIRECT_URI = config('ETSY_REDIRECT_URI')
 # Canva API credentials
 CANVA_CLIENT_ID = config('CANVA_CLIENT_ID')
 CANVA_CLIENT_SECRET = config('CANVA_CLIENT_SECRET')
+
 CANVA_REDIRECT_URI = config('CANVA_REDIRECT_URI')
