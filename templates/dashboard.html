@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Control Panel{% endblock %}
+
+{% block content %}
+
+<!-- ----------------- -->
+<!-- Summary Cards -->
+<!-- ----------------- -->
+<div class="d-flex flex-wrap justify-content-between gap-3 mb-4">
+
+    <!-- Total Products -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Total Products</h6>
+        <h2 class="mb-0">{{ total_products }}</h2>
+        <small>Active: {{ active_products }} | Inactive: {{ inactive_products }}</small>
+    </div>
+
+    <!-- Total Orders Completed -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Orders Completed</h6>
+        <h2 class="mb-0">{{ total_orders }}</h2>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Total Revenue</h6>
+        <h2 class="mb-0">${{ total_revenue }}</h2>
+    </div>
+
+    <!-- Total Profit -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Total Profit</h6>
+        <h2 class="mb-0">${{ total_profit }}</h2>
+    </div>
+
+    <!-- Most Selling Product -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Most Selling</h6>
+        {% if most_selling_product %}
+            <img src="{{ most_selling_product.thumbnail_url }}" alt="{{ most_selling_product.name }}" class="img-fluid mb-1" style="height:40px;">
+            <h6 class="mb-0">{{ most_selling_product.name }}</h6>
+            <small>{{ most_selling_product.units_sold }} units</small>
+        {% else %}
+            <small>N/A</small>
+        {% endif %}
+    </div>
+
+    <!-- Most Profitable Product -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Most Profitable</h6>
+        {% if most_profitable_product %}
+            <img src="{{ most_profitable_product.thumbnail_url }}" alt="{{ most_profitable_product.name }}" class="img-fluid mb-1" style="height:40px;">
+            <h6 class="mb-0">{{ most_profitable_product.name }}</h6>
+            <small>${{ most_profitable_product.total_profit }}</small>
+        {% else %}
+            <small>N/A</small>
+        {% endif %}
+    </div>
+
+    <!-- Products Generated Today -->
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Products Generated Today</h6>
+        <h2 class="mb-0">{{ products_generated_today }}</h2>
+        <small>Daily quota: {{ daily_quota }}</small>
+    </div>
+
+</div>
+
+<!-- ----------------- -->
+<!-- Charts / Trends -->
+<!-- ----------------- -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6 class="mb-3">Revenue Over Time</h6>
+            <canvas id="revenueChart" height="150"></canvas>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6 class="mb-3">Orders Completed Over Time</h6>
+            <canvas id="ordersChart" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6 class="mb-3">Product Generation Stats</h6>
+            <canvas id="productGenerationChart" height="150"></canvas>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6 class="mb-3">Profit per Product Type</h6>
+            <canvas id="profitChart" height="150"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- ----------------- -->
+<!-- Quick Actions -->
+<!-- ----------------- -->
+<div class="d-flex flex-wrap gap-3 mb-4">
+    <a href="{% url 'generate_products' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Generate New Products
+    </a>
+    <a href="/orders_list/" class="btn btn-secondary">
+        <i class="bi bi-cart"></i> View All Orders
+    </a>
+    <a href="/product_add_edit/" class="btn btn-info">
+        <i class="bi bi-pencil-square"></i> Add/Edit Product
+    </a>
+    <a href="/sync_etsy/" class="btn btn-warning">
+        <i class="bi bi-arrow-repeat"></i> Sync Etsy Shop
+    </a>
+    <a href="/export_reports    /" class="btn btn-success">
+        <i class="bi bi-download"></i> Export Reports
+    </a>
+</div>
+
+<!-- ----------------- -->
+<!-- Recent Activity -->
+<!-- ----------------- -->
+<div class="row mb-4">
+
+    <!-- Recent Orders -->
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6 class="mb-3">Recent Orders</h6>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.product.name }}</td>
+                            <td>{{ order.quantity }}</td>
+                            <td>${{ order.total_price }}</td>
+                            <td>
+                                {% if order.status == 'completed' %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% elif order.status == 'pending' %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ order.status|title }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No orders found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recently Generated Products -->
+    <div class="col-md-6 mb-3">
+        <div class="card p-3">
+            <h6 class="mb-3">Recently Generated Products</h6>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Profit</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in recent_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>${{ product.price }}</td>
+                            <td>${{ product.profit }}</td>
+                            <td>{{ product.get_status_display }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No products found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ----------------- -->
+<!-- Chart.js scripts (placeholder for charts) -->
+<!-- ----------------- -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+const productGenCtx = document.getElementById('productGenerationChart').getContext('2d');
+const profitCtx = document.getElementById('profitChart').getContext('2d');
+
+// Placeholder charts - use your view to pass actual chart data
+new Chart(revenueCtx, { type: 'line', data: { labels: [], datasets: [] } });
+new Chart(ordersCtx, { type: 'line', data: { labels: [], datasets: [] } });
+new Chart(productGenCtx, { type: 'bar', data: { labels: [], datasets: [] } });
+new Chart(profitCtx, { type: 'bar', data: { labels: [], datasets: [] } });
+</script>
+
+{% endblock %}

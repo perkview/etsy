@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Orders | Control Panel{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">Orders Dashboard</h3>
+
+<!-- Summary Cards -->
+<div class="d-flex flex-wrap gap-3 mb-4">
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Total Orders</h6>
+        <h2>{{ total_orders }}</h2>
+    </div>
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Completed Orders</h6>
+        <h2>{{ completed_orders }}</h2>
+    </div>
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Pending Orders</h6>
+        <h2>{{ pending_orders }}</h2>
+    </div>
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Total Revenue</h6>
+        <h2>${{ total_revenue }}</h2>
+    </div>
+    <div class="card p-3 text-center flex-fill">
+        <h6 class="text-muted">Total Profit</h6>
+        <h2>${{ total_profit }}</h2>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Order ID</th>
+                <th>User</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Cost (One-Time)</th>
+                <th>Profit (Recurring)</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Ordered At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user.username }}<br><small>{{ order.user.email }}</small></td>
+                <td>{{ order.product.name }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>${{ order.product.price }}</td>
+                <td>${{ order.product.cost }}</td>
+                <td>${{ order.total_price|floatformat:2|add:"-"|add:order.product.cost|floatformat:2 }}</td>
+                <td>${{ order.total_price }}</td>
+                <td>
+                    {% if order.status == 'completed' %}
+                        <span class="badge bg-success">Completed</span>
+                    {% elif order.status == 'pending' %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% elif order.status == 'canceled' %}
+                        <span class="badge bg-danger">Canceled</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ order.status|title }}</span>
+                    {% endif %}
+                </td>
+                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center">No orders found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Optional: Revenue / Profit Summary by Product -->
+{% if product_summary %}
+<div class="card p-3 mt-4">
+    <h5>Revenue / Profit by Product</h5>
+    <div class="table-responsive mt-2">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Product</th>
+                    <th>Units Sold</th>
+                    <th>Total Revenue</th>
+                    <th>Cost (One-Time)</th>
+                    <th>Total Profit</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in product_summary %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.units_sold }}</td>
+                    <td>${{ product.total_revenue }}</td>
+                    <td>${{ product.cost }}</td>
+                    <td>${{ product.total_profit }}</td>
+                    <td>
+                        {% if product.status == 'active' %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

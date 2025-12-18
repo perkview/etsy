@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Products | Control Panel{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>All Products</h3>
+</div>
+
+<!-- Products Table -->
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Cost</th>
+                <th>Profit</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>${{ product.price }}</td>
+                <td>${{ product.cost }}</td>
+                <td>${{ product.profit }}</td>
+                <td>
+                    {% if product.status == 'active' %}
+                        <span class="badge bg-success">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No products available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

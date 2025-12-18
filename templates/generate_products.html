@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Products | Control Panel{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">Generate Products / Resumes</h3>
+
+<!-- ----------------- -->
+<!-- Manual Generation -->
+<!-- ----------------- -->
+<div class="card p-3 mb-4">
+    <h5>Manual Generation</h5>
+    <form method="POST" action="{% url 'generate_products' %}">
+        {% csrf_token %}
+        <div class="row g-3">
+
+            <!-- 1️⃣ Product / Resume Basic Info -->
+            <div class="col-md-4">
+                <label class="form-label">Product / Resume Type</label>
+                <input type="text" name="product_type" class="form-control" placeholder="e.g., Software Developer Resume" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Number of Products</label>
+                <input type="number" name="count" class="form-control" placeholder="e.g., 10" min="1" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Style / Theme</label>
+                <input type="text" name="style" class="form-control" placeholder="e.g., Minimalist, Modern" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Base Name</label>
+                <input type="text" name="base_name" class="form-control" placeholder="e.g., Resume Template" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="active" selected>Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+
+            <!-- 2️⃣ Design & Layout -->
+            <div class="col-md-4">
+                <label class="form-label">Template/Layout Style</label>
+                <select name="layout_style" class="form-select">
+                    <option>Single Column</option>
+                    <option>Two Columns</option>
+                    <option>Modern</option>
+                    <option>Traditional</option>
+                    <option>Creative</option>
+                    <option>Minimalist</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Sections Order</label>
+                <input type="text" name="sections_order" class="form-control" placeholder="Header → Education → Experience → Skills → Projects → Certifications → Hobbies">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Font Family & Size</label>
+                <input type="text" name="font_family" class="form-control" placeholder="Arial, Roboto, Times New Roman, size, weight">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Colors & Theme</label>
+                <input type="text" name="colors_theme" class="form-control" placeholder="Primary, Accent, Background Colors">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Spacing & Margins</label>
+                <input type="text" name="spacing_margins" class="form-control" placeholder="Line spacing, padding, margins">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Icons / Graphics</label>
+                <input type="text" name="icons_graphics" class="form-control" placeholder="Social icons, stars, progress bars">
+            </div>
+
+            <!-- 3️⃣ Content Control -->
+            <div class="col-md-4">
+                <label class="form-label">Sections to Include / Hide</label>
+                <input type="text" name="sections_include" class="form-control" placeholder="Hobbies, Certifications, Awards, Portfolio Links">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Bullet Style</label>
+                <select name="bullet_style" class="form-select">
+                    <option>Dots</option>
+                    <option>Dashes</option>
+                    <option>Numbered</option>
+                    <option>No Bullets</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Language / Tone</label>
+                <select name="language_tone" class="form-select">
+                    <option>Formal</option>
+                    <option>Casual</option>
+                    <option>Creative</option>
+                </select>
+            </div>
+
+            <!-- 4️⃣ Resume Metadata -->
+            <div class="col-md-4">
+                <label class="form-label">Number of Versions</label>
+                <input type="number" name="num_versions" class="form-control" min="1" value="1">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Style Parameters</label>
+                <input type="text" name="style_params" class="form-control" placeholder="Minimalist, Corporate, Modern, Infographic">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Custom Sections</label>
+                <input type="text" name="custom_sections" class="form-control" placeholder="Awards, Conferences, Portfolio Links">
+            </div>
+
+            <!-- 5️⃣ Export & File Options -->
+            <div class="col-md-4">
+                <label class="form-label">File Format</label>
+                <select name="file_format" class="form-select">
+                    <option>PDF</option>
+                    <option>DOCX</option>
+                    <option>Canva Editable</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Page Size / Orientation</label>
+                <input type="text" name="page_size" class="form-control" placeholder="A4, Letter, Portrait, Landscape">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Watermark / Branding</label>
+                <input type="text" name="branding" class="form-control" placeholder="Logo, Footer Text">
+            </div>
+
+            <!-- 6️⃣ Automation & Tracking -->
+            <div class="col-md-4">
+                <label class="form-label">Daily Generation Count</label>
+                <input type="number" name="daily_count" class="form-control" min="1" value="1">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Template Selection Logic</label>
+                <select name="template_logic" class="form-select">
+                    <option>Random</option>
+                    <option>Rotation</option>
+                    <option>User Preference</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Versioning / Track Styles</label>
+                <input type="text" name="versioning" class="form-control" placeholder="Track styles for same resume type">
+            </div>
+
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary w-100">Generate Products / Resumes</button>
+        </div>
+    </form>
+</div>
+
+
+<!-- ----------------- -->
+<!-- Today’s Generated -->
+<!-- ----------------- -->
+{% if today_products %}
+<div class="card p-3 mb-4">
+    <h5>Products Generated Today</h5>
+    <div class="table-responsive mt-2">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Style</th>
+                    <th>Price</th>
+                    <th>Cost</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in today_products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.product_type }}</td>
+                    <td>{{ product.style }}</td>
+                    <td>${{ product.price }}</td>
+                    <td>${{ product.cost }}</td>
+                    <td>
+                        {% if product.status == 'active' %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- ----------------- -->
+<!-- Automation Settings -->
+<!-- ----------------- -->
+<div class="card p-3 mb-4">
+    <h5>Automation / Daily Generation Settings</h5>
+    <form method="POST" action="/save_generation_settings/">
+        {% csrf_token %}
+        <div class="row g-3">
+
+            <!-- 1️⃣ Design & Layout -->
+            <div class="col-md-4">
+                <label class="form-label">Template/Layout Style</label>
+                <select name="layout_style" class="form-select">
+                    <option>Single Column</option>
+                    <option>Two Columns</option>
+                    <option>Modern</option>
+                    <option>Traditional</option>
+                    <option>Creative</option>
+                    <option>Minimalist</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Sections Order</label>
+                <input type="text" name="sections_order" class="form-control" placeholder="Header → Education → Experience → Skills → Projects → Certifications → Hobbies">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Font Family & Size</label>
+                <input type="text" name="font_family" class="form-control" placeholder="Arial, Roboto, Times New Roman, size, weight">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Colors & Theme</label>
+                <input type="text" name="colors_theme" class="form-control" placeholder="Primary, Accent, Background Colors">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Spacing & Margins</label>
+                <input type="text" name="spacing_margins" class="form-control" placeholder="Line spacing, padding, margins">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Icons / Graphics</label>
+                <input type="text" name="icons_graphics" class="form-control" placeholder="Social icons, stars, progress bars">
+            </div>
+
+            <!-- 2️⃣ Content Control -->
+            <div class="col-md-4">
+                <label class="form-label">Sections to Include / Hide</label>
+                <input type="text" name="sections_include" class="form-control" placeholder="Hobbies, Certifications, Awards, Portfolio Links">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Bullet Style</label>
+                <select name="bullet_style" class="form-select">
+                    <option>Dots</option>
+                    <option>Dashes</option>
+                    <option>Numbered</option>
+                    <option>No Bullets</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Language / Tone</label>
+                <select name="language_tone" class="form-select">
+                    <option>Formal</option>
+                    <option>Casual</option>
+                    <option>Creative</option>
+                </select>
+            </div>
+
+            <!-- 3️⃣ Resume Metadata -->
+            <div class="col-md-4">
+                <label class="form-label">Resume Type</label>
+                <input type="text" name="resume_type" class="form-control" placeholder="e.g., Software Developer Resume">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Number of Versions</label>
+                <input type="number" name="num_versions" class="form-control" min="1" value="1">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Style Parameters</label>
+                <input type="text" name="style_params" class="form-control" placeholder="Minimalist, Corporate, Modern, Infographic">
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Custom Sections</label>
+                <input type="text" name="custom_sections" class="form-control" placeholder="Awards, Conferences, Portfolio Links">
+            </div>
+
+            <!-- 4️⃣ Export & File Options -->
+            <div class="col-md-4">
+                <label class="form-label">File Format</label>
+                <select name="file_format" class="form-select">
+                    <option>PDF</option>
+                    <option>DOCX</option>
+                    <option>Canva Editable</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Page Size / Orientation</label>
+                <input type="text" name="page_size" class="form-control" placeholder="A4, Letter, Portrait, Landscape">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Watermark / Branding</label>
+                <input type="text" name="branding" class="form-control" placeholder="Logo, Footer Text">
+            </div>
+
+            <!-- 5️⃣ Automation & Tracking -->
+            <div class="col-md-4">
+                <label class="form-label">Daily Generation Count</label>
+                <input type="number" name="daily_count" class="form-control" min="1" value="1">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Template Selection Logic</label>
+                <select name="template_logic" class="form-select">
+                    <option>Random</option>
+                    <option>Rotation</option>
+                    <option>User Preference</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Versioning / Track Styles</label>
+                <input type="text" name="versioning" class="form-control" placeholder="Track styles for same resume type">
+            </div>
+
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success w-100">Save Automation Settings</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

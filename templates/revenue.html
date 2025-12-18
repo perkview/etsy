@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Revenue | Control Panel{% endblock %}
+
+{% block content %}
+
+<h3 class="mb-4">Revenue & Product Performance Dashboard</h3>
+
+<!-- ----------------- -->
+<!-- 1️⃣ Sales & Revenue Metrics -->
+<!-- ----------------- -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Total Revenue</h6>
+            <h2>${{ total_revenue }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Total Orders</h6>
+            <h2>{{ total_orders }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Quantity Sold</h6>
+            <h2>{{ total_units }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Average Order Value (AOV)</h6>
+            <h2>${{ avg_order_value }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<!-- ----------------- -->
+<!-- 2️⃣ Profitability Metrics -->
+<!-- ----------------- -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Total Cost</h6>
+            <h2>${{ total_cost }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Total Profit</h6>
+            <h2>${{ total_profit }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Profit Margin (%)</h6>
+            <h2>{{ profit_margin }}%</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Most Profitable Product</h6>
+            <h5>{{ most_profitable_product.name }}</h5>
+        </div>
+    </div>
+
+</div>
+
+<!-- ----------------- -->
+<!-- 3️⃣ Popularity & Performance Metrics -->
+<!-- ----------------- -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Most Selling Product</h6>
+            <h5>{{ most_sold_product.name }}</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Top 5 Products by Orders</h6>
+            <ul class="list-unstyled mb-0">
+                {% for product in top_5_products %}
+                    <li>{{ product.name }} ({{ product.units_sold }} units)</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Trending Products</h6>
+            <ul class="list-unstyled mb-0">
+                {% for product in trending_products %}
+                    <li>{{ product.name }} ({{ product.units_sold }} units)</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Product Engagement</h6>
+            <ul class="list-unstyled mb-0">
+                {% for product in products %}
+                    <li>{{ product.name }}: {{ product.views }} views</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!-- ----------------- -->
+<!-- 4️⃣ Customer & Order Metrics -->
+<!-- ----------------- -->
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Active Customers</h6>
+            <h2>{{ active_customers }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Repeat Customers</h6>
+            <h2>{{ repeat_customers }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Average Orders per Customer</h6>
+            <h2>{{ avg_orders_per_customer }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Pending vs Completed Orders</h6>
+            <h5>{{ pending_orders }} / {{ completed_orders }}</h5>
+        </div>
+    </div>
+
+</div>
+
+<!-- ----------------- -->
+<!-- 5️⃣ Product-Specific Factors -->
+<!-- ----------------- -->
+<div class="mt-4">
+    <h4>Product Performance Details</h4>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Type / Category</th>
+                    <th>Style</th>
+                    <th>Units Sold</th>
+                    <th>Total Revenue</th>
+                    <th>Total Profit</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.style }}</td>
+                    <td>{{ product.units_sold }}</td>
+                    <td>${{ product.total_revenue }}</td>
+                    <td>${{ product.total_profit }}</td>
+                    <td>
+                        {% if product.status == 'active' %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No products found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ----------------- -->
+<!-- 6️⃣ Operational & Advanced Metrics -->
+<!-- ----------------- -->
+<div class="row g-3 mt-4">
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Revenue per Product Generated</h6>
+            <h5>${{ revenue_per_generated_product }}</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Cost Efficiency</h6>
+            <h5>{{ cost_efficiency }}%</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Average Production Time</h6>
+            <h5>{{ avg_production_time }} min</h5>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h6 class="text-muted">Forecasted Revenue (Next Week)</h6>
+            <h5>${{ forecasted_revenue }}</h5>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
